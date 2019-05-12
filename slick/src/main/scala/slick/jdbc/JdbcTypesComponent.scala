@@ -104,8 +104,7 @@ trait JdbcTypesComponent extends RelationalTypesComponent { self: JdbcProfile =>
     val clobJdbcType = new ClobJdbcType
     val dateJdbcType = new DateJdbcType
     val offsetDateTimeType: JdbcType[OffsetDateTime] = new OffsetDateTimeJdbcType
-    // Must be lazy to void initialization order issues
-    lazy val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
+    val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
     val offsetTimeType: JdbcType[OffsetTime] = new OffsetTimeJdbcType
     val localTimeType: JdbcType[LocalTime] = new LocalTimeJdbcType
     val doubleJdbcType = new DoubleJdbcType
@@ -373,12 +372,12 @@ trait JdbcTypesComponent extends RelationalTypesComponent { self: JdbcProfile =>
     implicit def timestampColumnType: JdbcType[Timestamp] = columnTypes.timestampJdbcType
     implicit def uuidColumnType: JdbcType[UUID] = columnTypes.uuidJdbcType
     implicit def bigDecimalColumnType: JdbcType[BigDecimal] with NumericTypedType = columnTypes.bigDecimalJdbcType
+    implicit def offsetDateTimeColumnType: JdbcType[OffsetDateTime] = columnTypes.offsetDateTimeType
     implicit def zonedDateTimeColumnType: JdbcType[ZonedDateTime] = columnTypes.zonedDateType
     implicit def offsetTimeColumnType: JdbcType[OffsetTime] = columnTypes.offsetTimeType
     implicit def localTimeColumnType: JdbcType[LocalTime] = columnTypes.localTimeType
 
     // Derived types
-    implicit def offsetDateTimeColumnType: JdbcType[OffsetDateTime] = MappedColumnType.base[OffsetDateTime, ZonedDateTime](_.toZonedDateTime, _.toOffsetDateTime)
     implicit def localDateColumnType: JdbcType[LocalDate] = MappedColumnType.base[LocalDate, Date](Date.valueOf, _.toLocalDate)
     implicit def localDateTimeColumnType: JdbcType[LocalDateTime] = MappedColumnType.base[LocalDateTime, Timestamp](Timestamp.valueOf, _.toLocalDateTime)
     implicit def instantColumnType: JdbcType[Instant] = MappedColumnType.base[Instant, ZonedDateTime](_.atZone(ZoneOffset.UTC), _.toInstant)

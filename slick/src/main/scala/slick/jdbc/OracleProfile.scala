@@ -307,7 +307,7 @@ END;
     override val timeJdbcType = new TimeJdbcType
     override val uuidJdbcType = new UUIDJdbcType
     override val offsetTimeType = new OffsetTimeJdbcType
-    override lazy val zonedDateType = new ZonedDateTimeJdbcType
+    override val zonedDateType = new ZonedDateTimeJdbcType
     override val offsetDateTimeType: JdbcType[OffsetDateTime] = offsetDateTimeJdbcType
     override val localTimeType = new LocalTimeJdbcType
     override val timestampJdbcType: TimestampJdbcType = new TimestampJdbcType {
