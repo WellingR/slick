@@ -267,6 +267,7 @@ trait PostgresProfile extends JdbcProfile {
     override val offsetTimeType = new OffsetTimeJdbcType
     override val localTimeType = new LocalTimeJdbcType
     override val offsetDateTimeType = new OffsetDateTimeJdbcType
+    override val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
 
     class ByteArrayJdbcType extends super.ByteArrayJdbcType {
       override val sqlType = java.sql.Types.BINARY

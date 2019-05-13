@@ -96,28 +96,31 @@ trait JdbcTypesComponent extends RelationalTypesComponent { self: JdbcProfile =>
   }
 
   class JdbcTypes {
-    val booleanJdbcType = new BooleanJdbcType
-    val blobJdbcType = new BlobJdbcType
-    val byteJdbcType = new ByteJdbcType
-    val byteArrayJdbcType = new ByteArrayJdbcType
-    val charJdbcType = new CharJdbcType
-    val clobJdbcType = new ClobJdbcType
-    val dateJdbcType = new DateJdbcType
+    val booleanJdbcType: JdbcType[Boolean] = new BooleanJdbcType
+    val blobJdbcType: JdbcType[Blob] = new BlobJdbcType
+    val byteJdbcType: JdbcType[Byte] with NumericTypedType = new ByteJdbcType
+    val byteArrayJdbcType: JdbcType[Array[Byte]] = new ByteArrayJdbcType
+    val charJdbcType: JdbcType[Char] = new CharJdbcType
+    val clobJdbcType: JdbcType[Clob] = new ClobJdbcType
+    val dateJdbcType: JdbcType[Date] = new DateJdbcType
+    val doubleJdbcType: JdbcType[Double] with NumericTypedType = new DoubleJdbcType
+    val floatJdbcType: JdbcType[Float] with NumericTypedType = new FloatJdbcType
+    val intJdbcType: JdbcType[Int] with NumericTypedType = new IntJdbcType
+    val longJdbcType: JdbcType[Long] with NumericTypedType = new LongJdbcType
+    val shortJdbcType: JdbcType[Short] with NumericTypedType = new ShortJdbcType
+    val stringJdbcType: JdbcType[String] = new StringJdbcType
+    val timeJdbcType: JdbcType[Time] = new TimeJdbcType
+    val timestampJdbcType: JdbcType[Timestamp] = new TimestampJdbcType
+    val uuidJdbcType: JdbcType[UUID] = new UUIDJdbcType
+    val bigDecimalJdbcType: JdbcType[BigDecimal] with NumericTypedType = new BigDecimalJdbcType
+    val nullJdbcType: JdbcType[Null] = new NullJdbcType
     val offsetDateTimeType: JdbcType[OffsetDateTime] = new OffsetDateTimeJdbcType
     val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
     val offsetTimeType: JdbcType[OffsetTime] = new OffsetTimeJdbcType
     val localTimeType: JdbcType[LocalTime] = new LocalTimeJdbcType
-    val doubleJdbcType = new DoubleJdbcType
-    val floatJdbcType = new FloatJdbcType
-    val intJdbcType = new IntJdbcType
-    val longJdbcType = new LongJdbcType
-    val shortJdbcType = new ShortJdbcType
-    val stringJdbcType = new StringJdbcType
-    val timeJdbcType = new TimeJdbcType
-    val timestampJdbcType: JdbcType[Timestamp] = new TimestampJdbcType
-    val uuidJdbcType = new UUIDJdbcType
-    val bigDecimalJdbcType = new BigDecimalJdbcType
-    val nullJdbcType = new NullJdbcType
+    val localDateJdbcType: JdbcType[LocalDate] = MappedColumnType.base[LocalDate, Date](Date.valueOf, _.toLocalDate)(implicitly[ClassTag[LocalDate]], dateJdbcType)
+    val localDateTimeJdbcType: JdbcType[LocalDateTime] = MappedColumnType.base[LocalDateTime, Timestamp](Timestamp.valueOf, _.toLocalDateTime)(implicitly[ClassTag[LocalDateTime]], timestampJdbcType)
+    val instantJdbcType: JdbcType[Instant] = MappedColumnType.base[Instant, OffsetDateTime](_.atOffset(ZoneOffset.UTC), _.toInstant)(implicitly[ClassTag[Instant]], offsetDateTimeType)
 
     class BooleanJdbcType extends DriverJdbcType[Boolean] {
       def sqlType = java.sql.Types.BOOLEAN
@@ -376,11 +379,9 @@ trait JdbcTypesComponent extends RelationalTypesComponent { self: JdbcProfile =>
     implicit def zonedDateTimeColumnType: JdbcType[ZonedDateTime] = columnTypes.zonedDateType
     implicit def offsetTimeColumnType: JdbcType[OffsetTime] = columnTypes.offsetTimeType
     implicit def localTimeColumnType: JdbcType[LocalTime] = columnTypes.localTimeType
-
-    // Derived types
-    implicit def localDateColumnType: JdbcType[LocalDate] = MappedColumnType.base[LocalDate, Date](Date.valueOf, _.toLocalDate)
-    implicit def localDateTimeColumnType: JdbcType[LocalDateTime] = MappedColumnType.base[LocalDateTime, Timestamp](Timestamp.valueOf, _.toLocalDateTime)
-    implicit def instantColumnType: JdbcType[Instant] = MappedColumnType.base[Instant, ZonedDateTime](_.atZone(ZoneOffset.UTC), _.toInstant)
+    implicit def localDateColumnType: JdbcType[LocalDate] = columnTypes.localDateJdbcType
+    implicit def localDateTimeColumnType: JdbcType[LocalDateTime] = columnTypes.localDateTimeJdbcType
+    implicit def instantColumnType: JdbcType[Instant] = columnTypes.instantJdbcType
   }
 }
 

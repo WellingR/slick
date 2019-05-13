@@ -1,7 +1,7 @@
 package slick.jdbc
 
 import java.sql.{PreparedStatement, ResultSet}
-import java.time.Instant
+import java.time.{Instant, ZonedDateTime}
 import java.util.UUID
 
 import scala.concurrent.ExecutionContext
@@ -194,6 +194,7 @@ trait DB2Profile extends JdbcProfile {
     override val localTimeType = javaSqlTimeBasedLocalTimeJdbcType
     override val offsetTimeType = intBasedOffsetTimeJdbcType
     override val offsetDateTimeType = bigIntBasedOffsetDateTimeJdbcType
+    override val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
     override val timestampJdbcType: TimestampJdbcType = new TimestampJdbcType {
       override def sqlTypeName(sym: Option[FieldSymbol]) = "TIMESTAMP(9)"
     }

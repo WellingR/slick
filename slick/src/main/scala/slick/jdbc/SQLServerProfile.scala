@@ -274,6 +274,7 @@ trait SQLServerProfile extends JdbcProfile {
       override def valueToSQLLiteral(uuid: UUID) = s"'${uuid.toString}'"
     }
     override val offsetDateTimeType = new OffsetDateTimeJdbcType
+    override val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
     /* SQL Server does not have a proper BOOLEAN type. The suggested workaround is
      * BIT with constants 1 and 0 for TRUE and FALSE. */
     class BooleanJdbcType extends super.BooleanJdbcType {
@@ -421,7 +422,7 @@ trait SQLServerProfile extends JdbcProfile {
 //    }
 
     class OffsetDateTimeJdbcType extends super.OffsetDateTimeJdbcType {
-      override def sqlTypeName(sym: Option[FieldSymbol]): String = "DATETIMEOFFSET(9)"
+      override def sqlTypeName(sym: Option[FieldSymbol]): String = "DATETIMEOFFSET(6)"
     }
 
     /* SQL Server's TINYINT is unsigned, so we use SMALLINT instead to store a signed byte value.

@@ -139,6 +139,7 @@ trait HsqldbProfile extends JdbcProfile {
     override val timestampJdbcType: TimestampJdbcType = new TimestampJdbcType {
       override def sqlTypeName(sym: Option[FieldSymbol]) = "TIMESTAMP(9)"
     }
+    override val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
 
 
 

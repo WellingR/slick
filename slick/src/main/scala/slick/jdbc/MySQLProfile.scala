@@ -2,12 +2,11 @@ package slick.jdbc
 
 import java.sql.{PreparedStatement, ResultSet, Timestamp}
 import java.time.temporal.ChronoUnit
-import java.time.LocalTime
+import java.time.{LocalTime, ZonedDateTime}
 
 import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
-
 import slick.SlickException
 import slick.ast._
 import slick.ast.Util._
@@ -375,6 +374,7 @@ trait MySQLProfile extends JdbcProfile { profile =>
     }
     override val offsetTimeType = intBasedOffsetTimeJdbcType
     override val offsetDateTimeType = bigIntBasedOffsetDateTimeJdbcType
+    override val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
   }
 }
 

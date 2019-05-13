@@ -1,7 +1,7 @@
 package slick.jdbc
 
 import java.sql.{PreparedStatement, ResultSet}
-import java.time.Instant
+import java.time.{Instant, ZonedDateTime}
 import java.util.UUID
 
 import scala.concurrent.ExecutionContext
@@ -271,6 +271,7 @@ trait DerbyProfile extends JdbcProfile {
     override val localTimeType = javaSqlTimeBasedLocalTimeJdbcType
     override val offsetTimeType = intBasedOffsetTimeJdbcType
     override val offsetDateTimeType = bigIntBasedOffsetDateTimeJdbcType
+    override val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
 
     /* Derby does not have a proper BOOLEAN type. The suggested workaround is
      * SMALLINT with constants 1 and 0 for TRUE and FALSE. */

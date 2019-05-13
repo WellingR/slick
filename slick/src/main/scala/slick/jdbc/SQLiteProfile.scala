@@ -288,6 +288,7 @@ trait SQLiteProfile extends JdbcProfile {
     override val localTimeType = javaSqlTimeBasedLocalTimeJdbcType
     override val offsetTimeType = intBasedOffsetTimeJdbcType
     override val offsetDateTimeType = bigIntBasedOffsetDateTimeJdbcType
+    override val zonedDateType: JdbcType[ZonedDateTime] = zonedDateTimeJdbcTypeFromOffsetDateTime
 
     /* SQLite does not have a proper BOOLEAN type. The suggested workaround is
      * INTEGER with constants 1 and 0 for TRUE and FALSE. */
