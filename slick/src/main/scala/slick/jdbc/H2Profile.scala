@@ -132,29 +132,24 @@ trait H2Profile extends JdbcProfile {
       override def hasLiteralForm = true
     }
     override val instantType : InstantJdbcType = new InstantJdbcType {
-      // H2 doesn't use ISO-8601 format strings and so can't use Instant.parse and needs its own formatter
-      val formatter = new DateTimeFormatterBuilder()
-                      .append(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                      .optionalStart()
-                      .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
-                      .optionalEnd()
-                      .appendOffset("+HH", "")
-                      .toFormatter()
-      override def sqlTypeName(sym: Option[FieldSymbol]) = "TIMESTAMP(9) WITH TIME ZONE"
+      override def sqlType: Int = java.sql.Types.TIMESTAMP_WITH_TIMEZONE
 
-      override def setValue(v: Instant, p: PreparedStatement, idx: Int) : Unit = {
-        p.setString(idx, if (v == null) null else v.toString)
+      override def sqlTypeName(sym: Option[FieldSymbol]): String = "TIMESTAMP(9) WITH TIME ZONE"
+
+      override def setValue(v: Instant, p: PreparedStatement, idx: Int): Unit = {
+        p.setObject(idx, v.atOffset(ZoneOffset.UTC))
       }
-      override def getValue(r: ResultSet, idx: Int) : Instant = {
-        r.getString(idx) match {
-          case null => null
-          case utcString => LocalDateTime.parse(utcString, formatter).toInstant(ZoneOffset.UTC)
-        }
+
+      override def getValue(r: ResultSet, idx: Int): Instant = r.getObject(idx, classOf[OffsetDateTime]) match {
+        case null => null
+        case v => v.toInstant
       }
-      override def updateValue(v: Instant, r: ResultSet, idx: Int) = {
-        r.updateString(idx, if (v == null) null else v.toString)
+
+      override def updateValue(v: Instant, r: ResultSet, idx: Int): Unit = {
+        r.updateObject(idx, v.atOffset(ZoneOffset.UTC))
       }
-      override def valueToSQLLiteral(value: Instant) : String = {
+
+      override def valueToSQLLiteral(value: Instant): String = {
         s"'${value.toString}'"
       }
     }
