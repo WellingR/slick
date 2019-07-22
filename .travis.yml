@@ -5,7 +5,7 @@ before_install:
 # TZ needed for Oracle driver!
 - export TZ=Asia/Kamchatka
 - docker version
-- sh -v travis/runcontainer.sh oracle db2
+- sh -v travis/runcontainer.sh oracle
 - docker ps
 - sh -v ./travis/extractNonPublicDeps
 jdk:
